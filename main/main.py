@@ -119,7 +119,7 @@ class Main:
 VIDD_module = Main()
 
 # Specify the folder path containing the CSV files
-folder_path = r'C:\Users\Ethan\Documents\fred_hutch_project\dataset'
+folder_path = r'C:\Users\Ethan\Documents\fred_hutch_project\fred_hutch_publication_map\dataset'
 
 # Specify the CSV file path
 csv_file_path = 'adj_matrix.csv'
