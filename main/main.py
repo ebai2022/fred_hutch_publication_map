@@ -8,7 +8,6 @@ Todo:
 Write CSV file that has a dictionary of all publications 2020 and beyond
 Write CSV file that has a dictionary of all publications 2019 and beyond
 Create a smaller test set to verify and test code
-Testing commits
 """
 
 
