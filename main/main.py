@@ -9,7 +9,7 @@ class Main:
     VIDD_module = Graph()
 
     # Specify the folder path containing the CSV files
-    folder_path = r'C:\Users\Ethan\Documents\fred_hutch_publication_map\main\dataset'
+    folder_path = r'C:\Users\Ethan\Documents\fred_hutch_publication_map\main\VIDD_publication_set'
 
     # Specify the CSV file path
     csv_file_path = 'adj_matrix.csv'

@@ -78,7 +78,7 @@ class Graph:
         
     # constructs the adjacency matrix
     def construct_matrix(self):
-        size = len(self.VIDD_AUTHORS)
+        size = len(self.VIDD_AUTHORS) + 1
         matrix = [[0 for _ in range(size)] for _ in range(size)]
         for pub in self.database:
             curr = list(self.database[pub])
