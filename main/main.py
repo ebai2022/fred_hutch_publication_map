@@ -18,10 +18,16 @@ class Main:
     VIDD_module.load_names('names.txt')
 
     # Call the method to read CSV files in the folder
-    VIDD_module.read_csv_files_in_folder(folder_path)
+    currData, pastData = VIDD_module.read_csv_files_in_folder(folder_path)
 
     # Create the matrix
     matrix = VIDD_module.construct_matrix()
 
-    #write to the file
+    # Write matrix to a file
     VIDD_module.write_matrix_to_file(csv_file_path, matrix)
+
+    # Write post 2020 data map to csv
+    VIDD_module.write_dict_to_file('post_cuffoff_data.csv', currData)
+    
+    # Write pre 2020 data map to csv
+    VIDD_module.write_dict_to_file('pre_cutoff_data.csv', pastData)
