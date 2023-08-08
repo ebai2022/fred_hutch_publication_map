@@ -5,14 +5,22 @@ import os
 
 """
 Todo:
+Send Sophia links and explanations
+
+Done: 
+Create 3 different matrices for the 3 different groups
+Differentiate Huang YU and Huang YI (edit CSV file)
 """
 
 class Graph:
     def __init__(self):
-        self.VIDD_AUTHORS = {}
-        self.database = {}
-        self.DATECUTOFF = 2020
-        self.preCutoffPapers = {}
+        self.VIDD_AUTHORS = {} # tracks the entire set of VIDD authors
+        self.IVD_AUTHORS = {} # tracks the set of IVD authors
+        self.BBE_AUTHORS = {} # tracks the set of BBE authors
+        self.IDS_AUTHORS = {} # tracks the set of IDS authors
+        self.database = {} # tracks post 2020 PMID -> author list
+        self.DATECUTOFF = 2020 # requested cutoff date is 2020
+        self.preCutoffPapers = {} # tracks pre 2020 PMID -> author list
         #self.fuzzedDatabase = {}
 
     # reads a folder of csv files
@@ -22,7 +30,9 @@ class Graph:
             csv_file_path = os.path.join(folder_path, csv_file)
             with open(csv_file_path, 'r', encoding='utf-8') as file:
                 csv_reader = csv.reader(file)
+                # skip the first line
                 next(csv_reader)
+
                 for row in csv_reader:
                     if row[0] not in self.database:
                         names = row[2].strip().split(',')
@@ -31,11 +41,16 @@ class Graph:
                             self.database[row[0]] = set()
                             for name in names:
                                 longerName = name.strip().upper()
+                                # name comparison to avoid losing people with middle initials
                                 for author in self.VIDD_AUTHORS:
                                     if author in longerName:
+                                        # converts all names into last_name first_initial format
                                         self.database[row[0]].add(author)
+                            # removes papers that don't have any VIDD authors
                             if len(self.database[row[0]]) == 0:
                                 del self.database[row[0]]
+
+                        # additional sectioning of pre 2020 papers
                         else:
                             self.preCutoffPapers[row[0]] = set()
                             for name in names:
@@ -65,28 +80,56 @@ class Graph:
             
     
     # reads the name file into a dictionary of name -> index
-    def load_names(self, namefile):
+    def load_names(self, namefile, groupfile):
         names_list = []
         with open(namefile, "r") as file:
             names_list = file.readlines()
-        # Remove newline characters and whitespace from each name
-        ret_names = {}
+        with open(groupfile, "r") as file:
+            group_list = file.readlines()
+        # array with index 0->BBE, index 1->IVD, and index 2->IDS
+        count = [0] * 3
         for i in range(len(names_list)):
+            group = group_list[i].strip()
             name_parts = names_list[i].strip().split()
             name = name_parts[0] + ' ' + name_parts[1][0]
             self.VIDD_AUTHORS[name] = i
-        
-    # constructs the adjacency matrix
-    def construct_matrix(self):
-        size = len(self.VIDD_AUTHORS) + 1
+            if group == 'BBE':
+                self.BBE_AUTHORS[name] = count[0]
+                count[0] += 1
+            elif group == 'IVD':
+                self.IVD_AUTHORS[name] = count[1]
+                count[1] += 1
+            elif group == 'IDS':
+                self.IDS_AUTHORS[name] = count[2]
+                count[2] += 1
+
+    # constructs the adjacency matrix from a given group
+    # 'ALL' -> everyone, 'IVD' -> IVD div, 'BBE' -> BBE div, 'IDS' -> IDS div
+    # Future thoughts - make these not mutually exclusive to allow seeing multiple groups?
+    def construct_matrix(self, group):
+        if group == 'ALL':
+            size = len(self.VIDD_AUTHORS) + 1
+            author_list = self.VIDD_AUTHORS
+        elif group == 'IVD':
+            size = len(self.IVD_AUTHORS) + 1
+            author_list = self.IVD_AUTHORS
+        elif group == 'BBE':
+            size = len(self.BBE_AUTHORS) + 1
+            author_list = self.BBE_AUTHORS
+        elif group == 'IDS':
+            size = len(self.IDS_AUTHORS) + 1
+            author_list = self.IDS_AUTHORS
+
         matrix = [[0 for _ in range(size)] for _ in range(size)]
         for pub in self.database:
             curr = list(self.database[pub])
-            # jank stuff to not duplicate cause sets
+            # Avoids duplication
             for i in range(len(curr)):
                 for j in range(i+1, len(curr)):
-                    x = self.VIDD_AUTHORS[curr[i]]
-                    y = self.VIDD_AUTHORS[curr[j]]
-                    matrix[x][y] += 1
-                    matrix[y][x] += 1
+                    # limit to only the authors in the specificed group
+                    if curr[i] in author_list and curr[j] in author_list:
+                        x = author_list[curr[i]]
+                        y = author_list[curr[j]]
+                        matrix[x][y] += 1
+                        matrix[y][x] += 1
         return matrix
