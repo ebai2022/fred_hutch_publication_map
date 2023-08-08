@@ -6,6 +6,7 @@ import os
 """
 Todo:
 Send Sophia links and explanations
+Figure out how to write to specific folders
 
 Done: 
 Create 3 different matrices for the 3 different groups
