@@ -4,13 +4,8 @@ import os
 #from fuzzywuzzy import fuzz
 
 """
-Todo:
-Send Sophia links and explanations
-Figure out how to write to specific folders
-
-Done: 
-Create 3 different matrices for the 3 different groups
-Differentiate Huang YU and Huang YI (edit CSV file)
+Author: Ethan Bai
+Reads CSV files, trims their data, and creates an adjacency matrix of an undirected graph
 """
 
 class Graph:
@@ -64,12 +59,12 @@ class Graph:
         return self.database, self.preCutoffPapers
 
     # Write the matrix to a CSV file
-    def write_matrix_to_file(self, csv_file_path, matrix):
-        with open(csv_file_path, 'w', newline='') as csv_file:
+    def write_matrix_to_file(self, matrix, output_file_path):
+        with open(output_file_path, 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
             for row in matrix:
                 csv_writer.writerow(row)
-
+            
     # Write the dictionary to a CSV file
     def write_dict_to_file(self, csv_file_path, dict):
         with open(csv_file_path, 'w', newline='') as csv_file:

@@ -1,6 +1,7 @@
 from graph import Graph
 
 """
+Author: Ethan Bai
 Test class
 """
 
