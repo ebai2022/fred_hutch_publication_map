@@ -43,7 +43,7 @@ class Main:
     currData, pastData = VIDD_module.read_csv_files_in_folder(csv_folder_path)
 
     # Create the matrices
-    full_matrix = VIDD_module.construct_matrix('ALL')
+    full_matrix = VIDD_module.construct_matrix('VIDD')
     BBE_matrix = VIDD_module.construct_matrix('BBE')
     IVD_matrix = VIDD_module.construct_matrix('IVD')
     IDS_matrix = VIDD_module.construct_matrix('IDS')
@@ -59,3 +59,9 @@ class Main:
     
     # Write pre 2020 data map to csv
     VIDD_module.write_dict_to_file(pastData, output_folder_path, "post_cutoff_data")
+
+    # Create legends
+    VIDD_module.create_legend('VIDD', output_folder_path, "VIDD_names")
+    VIDD_module.create_legend('BBE', output_folder_path, "BBE_names")
+    VIDD_module.create_legend('IVD', output_folder_path, "IVD_names")
+    VIDD_module.create_legend('IDS', output_folder_path, "IDS_names")

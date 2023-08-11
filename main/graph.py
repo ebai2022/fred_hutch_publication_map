@@ -17,10 +17,10 @@ class Graph:
         self.IDS_AUTHORS = {} # tracks the set of IDS authors
 
         # tracks index to author to generate lists
-        self.VIDD_AUTHORS = {}
-        self.IVD_indexes = {}
-        self.BBE_indexes = {}
-        self.IDS_indexes = {}
+        self.VIDD_indices = {}
+        self.IVD_indices = {}
+        self.BBE_indices = {}
+        self.IDS_indices = {}
 
         self.database = {} # tracks post 2020 PMID -> author list
         self.DATECUTOFF = 2020 # requested cutoff date is 2020
@@ -36,7 +36,6 @@ class Graph:
                 csv_reader = csv.reader(file)
                 # skip the first line
                 next(csv_reader)
-
                 for row in csv_reader:
                     if row[0] not in self.database:
                         names = row[2].strip().split(',')
@@ -94,53 +93,42 @@ class Graph:
         with open(groupfile_path, "r") as file:
             group_list = file.readlines()
         # array with index 0->BBE, index 1->IVD, and index 2->IDS
-        count = [0] * 3
+        count = {"BBE": 0, "IVD": 0, "IDS": 0}
         for i in range(len(names_list)):
             group = group_list[i].strip()
             name_parts = names_list[i].strip().split()
             name = name_parts[0] + ' ' + name_parts[1][0]
             self.VIDD_AUTHORS[name] = i
-            if group == 'BBE':
-                self.BBE_AUTHORS[name] = count[0]
-                self.BBE_indexes[count[0]] = name
-                count[0] += 1
-            elif group == 'IVD':
-                self.IVD_AUTHORS[name] = count[1]
-                self.IVD_indexes[count[1]] = name
-                count[1] += 1
-            elif group == 'IDS':
-                self.IDS_AUTHORS[name] = count[2]
-                self.IDS_indexes[count[2]] = name
-                count[2] += 1
+            self.VIDD_indices[i] = name
+            if group in "BBEIVDIDS":
+                # group map update
+                group_attr = f"{group}_AUTHORS"
+                group_name = f"{group}"
+                group_authors = getattr(self, group_attr)
+                group_authors[name] = count[group_name]
+                # creating reverse map
+                index_attr = f"{group}_indices"
+                index_authors = getattr(self, index_attr)
+                index_authors[count[group_name]] = name
+                
+                count[group_name] += 1
+
 
     # Write a legend of index in matrix -> author name
-    def create_legend(self, group, filepath):
-        legend = self.VIDD_AUTHORS
-        if group == 'BBE':
-            legend = self.BBE_indexes
-        elif group == 'IVD':
-            legend = self.IVD_indexes
-        elif group == 'IDS':
-            legend = self.IDS_indexes
-
-
+    def create_legend(self, group, path, filename):
+        file_path = f"{path}/{filename}.txt"
+        group_attr = f"{group}_indices"
+        legend = getattr(self, group_attr)
+        with open(file_path, 'w', newline='') as file:
+            for i in range(len(legend)):
+                file.write(legend[i] + "\n")
+        
 
     # constructs the adjacency matrix from a given group
-    # 'ALL' -> everyone, 'IVD' -> IVD div, 'BBE' -> BBE div, 'IDS' -> IDS div
     def construct_matrix(self, group):
-        if group == 'ALL':
-            size = len(self.VIDD_AUTHORS) + 1
-            author_list = self.VIDD_AUTHORS
-        elif group == 'IVD':
-            size = len(self.IVD_AUTHORS) + 1
-            author_list = self.IVD_AUTHORS
-        elif group == 'BBE':
-            size = len(self.BBE_AUTHORS) + 1
-            author_list = self.BBE_AUTHORS
-        elif group == 'IDS':
-            size = len(self.IDS_AUTHORS) + 1
-            author_list = self.IDS_AUTHORS
-
+        group_attr = f"{group}_AUTHORS"
+        author_list = getattr(self, group_attr)
+        size = len(author_list) + 1
         matrix = [[0 for _ in range(size)] for _ in range(size)]
         for pub in self.database:
             curr = list(self.database[pub])
