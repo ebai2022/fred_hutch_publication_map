@@ -4,9 +4,6 @@ import os
 Author: Ethan Bai
 Main program to run and operate graph creation
 
-Todo:
-Create relative file tracking (use current file path and then route)
-Once all name files are generated into a CSV, use those as the base txt files and use variables instead of storing so much data
 
 Notes:
 140 VIDD members are listed in names.txt
@@ -15,7 +12,6 @@ Publications from each person are in VIDD_publication_set
 
 
 Future ideas:
-Create flexible file pathing for both input and output (e.g. loading names/output matrices)
 Add feature to construct matrices that combine different groups (e.g. IVD and IDS)
 Build direct connection to Socnet software
 Combine data sets of names and programs to read from 1 file instead of 2

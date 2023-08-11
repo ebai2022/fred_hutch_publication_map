@@ -5,7 +5,7 @@ import os
 
 """
 Author: Ethan Bai
-Provides graph functionalities:
+Main graph functionalities:
 Reads CSV files, trims their data, and creates an adjacency matrix of an undirected graph
 """
 
