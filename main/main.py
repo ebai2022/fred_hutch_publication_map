@@ -2,7 +2,22 @@ from graph import Graph
 
 """
 Author: Ethan Bai
-Main program for graph creation
+Main program to run and operate graph creation
+
+
+Notes:
+140 VIDD members are listed in names.txt
+Groups of the 140 VIDD members are listed in VIDD_primary_scientific_program
+Publications from each person are in VIDD_publication_set
+
+
+Future ideas:
+Create flexible file pathing for both input and output (e.g. loading names/output matrices)
+Add feature to construct matrices that combine different groups (e.g. IVD and IDS)
+Build direct connection to Socnet software
+Combine data sets of names and programs to read from 1 file instead of 2
+Find a better way to test than on manually created data sets
+Find a way to webscrape articles into CSV database
 """
 
 class Main:

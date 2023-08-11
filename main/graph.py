@@ -5,6 +5,7 @@ import os
 
 """
 Author: Ethan Bai
+Provides graph functionalities:
 Reads CSV files, trims their data, and creates an adjacency matrix of an undirected graph
 """
 
@@ -101,7 +102,6 @@ class Graph:
 
     # constructs the adjacency matrix from a given group
     # 'ALL' -> everyone, 'IVD' -> IVD div, 'BBE' -> BBE div, 'IDS' -> IDS div
-    # Future thoughts - make these not mutually exclusive to allow seeing multiple groups?
     def construct_matrix(self, group):
         if group == 'ALL':
             size = len(self.VIDD_AUTHORS) + 1
