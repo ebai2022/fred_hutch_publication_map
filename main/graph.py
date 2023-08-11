@@ -15,6 +15,13 @@ class Graph:
         self.IVD_AUTHORS = {} # tracks the set of IVD authors
         self.BBE_AUTHORS = {} # tracks the set of BBE authors
         self.IDS_AUTHORS = {} # tracks the set of IDS authors
+
+        # tracks index to author to generate lists
+        self.VIDD_AUTHORS = {}
+        self.IVD_indexes = {}
+        self.BBE_indexes = {}
+        self.IDS_indexes = {}
+
         self.database = {} # tracks post 2020 PMID -> author list
         self.DATECUTOFF = 2020 # requested cutoff date is 2020
         self.preCutoffPapers = {} # tracks pre 2020 PMID -> author list
@@ -60,28 +67,31 @@ class Graph:
         return self.database, self.preCutoffPapers
 
     # Write the matrix to a CSV file
-    def write_matrix_to_file(self, matrix, output_file_path):
-        with open(output_file_path, 'w', newline='') as csv_file:
+    def write_matrix_to_file(self, matrix, path, filename):
+        file_path = f"{path}/{filename}.csv"
+        with open(file_path, 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
             for row in matrix:
                 csv_writer.writerow(row)
             
     # Write the dictionary to a CSV file
-    def write_dict_to_file(self, csv_file_path, dict):
-        with open(csv_file_path, 'w', newline='') as csv_file:
+    def write_dict_to_file(self, data, path, filename):
+        file_path = f"{path}/{filename}.csv"
+        with open(file_path, 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
-            for key, values in dict.items():
+            for key, values in data.items():
                 row = [key] + list(values)
                 csv_writer.writerow(row)
             csv_file.close()
-            
     
     # reads the name file into a dictionary of name -> index
-    def load_names(self, namefile, groupfile):
+    def load_names(self, path, namefile, groupfile):
+        namefile_path = f"{path}/{namefile}.txt"
+        groupfile_path = f"{path}/{groupfile}.txt"
         names_list = []
-        with open(namefile, "r") as file:
+        with open(namefile_path, "r") as file:
             names_list = file.readlines()
-        with open(groupfile, "r") as file:
+        with open(groupfile_path, "r") as file:
             group_list = file.readlines()
         # array with index 0->BBE, index 1->IVD, and index 2->IDS
         count = [0] * 3
@@ -92,13 +102,28 @@ class Graph:
             self.VIDD_AUTHORS[name] = i
             if group == 'BBE':
                 self.BBE_AUTHORS[name] = count[0]
+                self.BBE_indexes[count[0]] = name
                 count[0] += 1
             elif group == 'IVD':
                 self.IVD_AUTHORS[name] = count[1]
+                self.IVD_indexes[count[1]] = name
                 count[1] += 1
             elif group == 'IDS':
                 self.IDS_AUTHORS[name] = count[2]
+                self.IDS_indexes[count[2]] = name
                 count[2] += 1
+
+    # Write a legend of index in matrix -> author name
+    def create_legend(self, group, filepath):
+        legend = self.VIDD_AUTHORS
+        if group == 'BBE':
+            legend = self.BBE_indexes
+        elif group == 'IVD':
+            legend = self.IVD_indexes
+        elif group == 'IDS':
+            legend = self.IDS_indexes
+
+
 
     # constructs the adjacency matrix from a given group
     # 'ALL' -> everyone, 'IVD' -> IVD div, 'BBE' -> BBE div, 'IDS' -> IDS div
